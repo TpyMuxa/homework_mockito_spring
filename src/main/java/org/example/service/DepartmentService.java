@@ -1,10 +1,8 @@
 package org.example.service;
 
-import org.example.exception.EmployeeNotFoundException;
 import org.example.model.Employee;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,18 +16,27 @@ public class DepartmentService {
         this.employeeService = employeeService;
     }
 
-    public Employee getEmployeeWithMaxSalary(int department) {
+    public Integer getMaxSalary(int department) {
         return employeeService.findAll().stream()
                 .filter(employee -> employee.getDepartment() == department)
-                .max(Comparator.comparingInt(Employee::getSalary))
-                .orElseThrow(EmployeeNotFoundException::new);
+                .map(Employee::getSalary)
+                .max(Integer::compareTo)
+                .orElse(null);
     }
 
-    public Employee getEmployeeWithMinSalary(int department) {
+    public Integer getMinSalary(int department) {
         return employeeService.findAll().stream()
                 .filter(employee -> employee.getDepartment() == department)
-                .min(Comparator.comparingInt(Employee::getSalary))
-                .orElseThrow(EmployeeNotFoundException::new);
+                .map(Employee::getSalary)
+                .min(Integer::compareTo)
+                .orElse(null);
+    }
+
+    public int getSumOfSalaries(int department) {
+        return employeeService.findAll().stream()
+                .filter(employee -> employee.getDepartment() == department)
+                .mapToInt(Employee::getSalary)
+                .sum();
     }
 
     public List<Employee> getEmployeesFromDepartment(int department) {
